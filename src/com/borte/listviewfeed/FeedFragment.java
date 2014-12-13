@@ -9,11 +9,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.Menu;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.android.volley.Cache;
@@ -28,34 +28,22 @@ import com.borte.listviewfeed.app.AppController;
 import com.borte.listviewfeed.data.FeedItem;
 import com.borte.listviewfeed.imageprocessing.FaceDetectionOpenCV;
 
-public class MainActivity extends Activity {
-	private static final String TAG = MainActivity.class.getSimpleName();
+public class FeedFragment extends Fragment {
+	private static final String TAG = FeedFragment.class.getSimpleName();
 	private ListView listView;
 	private FeedListAdapter listAdapter;
 	private List<FeedItem> feedItems;
 	private String URL_FEED = "http://api.androidhive.info/feed/feed.json";
-	
+
 	private FaceDetectionOpenCV facedetector;
-	
+
 	@SuppressLint("NewApi")
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-
-		listView = (ListView) findViewById(R.id.list);
 
 		feedItems = new ArrayList<FeedItem>();
-
-		listAdapter = new FeedListAdapter(this, feedItems);
-		listView.setAdapter(listAdapter);
-		
-		// These two lines not needed,
-		// just to get the look of facebook (changing background color & hiding the icon)
-		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3b5998")));
-		getActionBar().setIcon(
-				   new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-
+		listAdapter = new FeedListAdapter(getActivity(), feedItems);
 		// We first check for cached request
 		Cache cache = AppController.getInstance().getRequestQueue().getCache();
 		Entry entry = cache.get(URL_FEED);
@@ -77,26 +65,27 @@ public class MainActivity extends Activity {
 			JsonObjectRequest jsonReq = new JsonObjectRequest(Method.GET,
 					URL_FEED, null, new Response.Listener<JSONObject>() {
 
-						@Override
-						public void onResponse(JSONObject response) {
-							VolleyLog.d(TAG, "Response: " + response.toString());
-							if (response != null) {
-								parseJsonFeed(response);
-							}
-						}
-					}, new Response.ErrorListener() {
+				@Override
+				public void onResponse(JSONObject response) {
+					VolleyLog.d(TAG, "Response: " + response.toString());
+					if (response != null) {
+						parseJsonFeed(response);
+					}
+				}
+			}, new Response.ErrorListener() {
 
-						@Override
-						public void onErrorResponse(VolleyError error) {
-							VolleyLog.d(TAG, "Error: " + error.getMessage());
-						}
-					});
+				@Override
+				public void onErrorResponse(VolleyError error) {
+					VolleyLog.d(TAG, "Error: " + error.getMessage());
+				}
+			});
 
 			// Adding request to volley request queue
 			AppController.getInstance().addToRequestQueue(jsonReq);
 		}
-		
-		this.facedetector = new FaceDetectionOpenCV(this);
+
+
+		this.facedetector = new FaceDetectionOpenCV(getActivity());
 	}
 
 	/**
@@ -137,22 +126,24 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		listView = (ListView) getActivity().findViewById(R.id.list);
+		listView.setAdapter(listAdapter);
+
+		return inflater.inflate(R.layout.feed_main, container, false);
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
 		facedetector.resume();
 	}
-	
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        facedetector.pause();
-    }
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		facedetector.pause();
+	}
 
 }

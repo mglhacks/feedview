@@ -1,0 +1,63 @@
+package com.borte;
+
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+
+import com.borte.listviewfeed.FeedFragment;
+import com.borte.listviewfeed.R;
+import com.borte.uploading.UploadCameraFragment;
+
+public class MainActivity extends FragmentActivity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.feed_main);
+		setupTabs();
+	}
+
+	@SuppressLint("NewApi")
+	private void setupTabs() {
+		ActionBar actionBar = getActionBar();
+
+		// To get the look of facebook (changing background color & hiding the
+		// icon)
+		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3b5998")));
+		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setDisplayShowTitleEnabled(true);
+
+		Tab feedTab = actionBar
+				.newTab()
+				.setText("Home")
+				.setIcon(R.drawable.ic_action_view_as_list)
+				.setTabListener(
+						new FragmentTabListener<FeedFragment>(0, this, "feed", FeedFragment.class));
+		actionBar.addTab(feedTab);
+
+		Tab uploadTab = actionBar
+				.newTab()
+				.setText("Upload")
+				.setIcon(R.drawable.ic_action_camera)
+				.setTabListener(
+						new FragmentTabListener<UploadCameraFragment>(this, "upload",
+								UploadCameraFragment.class));
+		actionBar.addTab(uploadTab);
+
+		actionBar.selectTab(feedTab);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+}
