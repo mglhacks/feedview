@@ -1,7 +1,5 @@
 package com.borte.listviewfeed;
 
-import info.borte.listviewfeed.R;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +33,7 @@ public class MainActivity extends Activity {
 	private FeedListAdapter listAdapter;
 	private List<FeedItem> feedItems;
 	private String URL_FEED = "http://api.androidhive.info/feed/feed.json";
+	
 
 	@SuppressLint("NewApi")
 	@Override
@@ -94,7 +93,7 @@ public class MainActivity extends Activity {
 			// Adding request to volley request queue
 			AppController.getInstance().addToRequestQueue(jsonReq);
 		}
-
+		
 	}
 
 	/**
@@ -127,7 +126,7 @@ public class MainActivity extends Activity {
 				feedItems.add(item);
 			}
 
-			// notify data changes to list adapater
+			// notify data changes to list adapter
 			listAdapter.notifyDataSetChanged();
 		} catch (JSONException e) {
 			e.printStackTrace();
