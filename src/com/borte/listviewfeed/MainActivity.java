@@ -26,6 +26,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.borte.listviewfeed.adapter.FeedListAdapter;
 import com.borte.listviewfeed.app.AppController;
 import com.borte.listviewfeed.data.FeedItem;
+import com.borte.listviewfeed.imageprocessing.FaceDetectionOpenCV;
 
 public class MainActivity extends Activity {
 	private static final String TAG = MainActivity.class.getSimpleName();
@@ -34,7 +35,8 @@ public class MainActivity extends Activity {
 	private List<FeedItem> feedItems;
 	private String URL_FEED = "http://api.androidhive.info/feed/feed.json";
 	
-
+	private FaceDetectionOpenCV facedetector;
+	
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,7 @@ public class MainActivity extends Activity {
 			AppController.getInstance().addToRequestQueue(jsonReq);
 		}
 		
+		this.facedetector = new FaceDetectionOpenCV(this);
 	}
 
 	/**
@@ -138,5 +141,18 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		facedetector.resume();
+	}
+	
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        facedetector.pause();
+    }
 
 }

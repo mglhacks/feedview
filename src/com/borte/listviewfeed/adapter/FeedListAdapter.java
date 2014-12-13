@@ -20,14 +20,11 @@ import com.borte.listviewfeed.FeedImageView;
 import com.borte.listviewfeed.R;
 import com.borte.listviewfeed.app.AppController;
 import com.borte.listviewfeed.data.FeedItem;
-import com.borte.listviewfeed.imageprocessing.FaceDetectionManager;
 
 public class FeedListAdapter extends BaseAdapter {	
 	private Activity activity;
 	private LayoutInflater inflater;
 	private List<FeedItem> feedItems;
-	
-	private FaceDetectionManager faceDetectionManager = new FaceDetectionManager();
 	
 	ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 

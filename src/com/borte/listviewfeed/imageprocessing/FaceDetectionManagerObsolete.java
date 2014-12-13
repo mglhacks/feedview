@@ -3,24 +3,36 @@ package com.borte.listviewfeed.imageprocessing;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.media.FaceDetector;
 import android.util.Log;
 
-public class FaceDetectionManager {
+public class FaceDetectionManagerObsolete {
 
-	private static String TAG = FaceDetectionManager.class.getSimpleName();
+	private static final String TAG = FaceDetectionManagerObsolete.class.getSimpleName();
+	private static final int MAX_FACES = 1;
 
-	private Camera camera;
-	private SurfaceTexture surfaceTexture = new SurfaceTexture(0);
+	private final Context context;
+	private final Camera camera;
+	private final SurfaceTexture surfaceTexture = new SurfaceTexture(0);
 
-	public FaceDetectionManager() {
-		camera = openFrontFacingCameraGingerbread();
+	private float faceXRatio; // 0: left edge, 1: right edge
+	private float faceYRatio; // 0: top edge, 1: bottom edge
+	private PointF midPoint = new PointF();
+
+	private FaceDetector.Face[] faces;
+
+	public FaceDetectionManagerObsolete(Context context) {
+		this.context = context;
+		this.camera = openFrontFacingCameraGingerbread();
 		try {
 			camera.setPreviewTexture(surfaceTexture);
 		} catch (IOException e) {
@@ -35,10 +47,30 @@ public class FaceDetectionManager {
 				int previewWidth = camera.getParameters().getPreviewSize().width;
 				int previewHeight = camera.getParameters().getPreviewSize().height;
 
-				Bitmap bmp = getBitmapImageFromYUV(data, previewWidth, previewHeight);
-				Log.d(TAG, "width: " + bmp.getWidth() + ", height: " + bmp.getHeight());
+				Bitmap bitmap = getBitmapImageFromYUV(data, previewWidth, previewHeight);
+				updateFacePosition(bitmap);
 			}
 		});
+	}
+	
+	public void close() {
+		if (camera != null) {
+			camera.stopPreview();
+			camera.release();
+		}
+	}
+
+	private void updateFacePosition(Bitmap bitmap) {
+		FaceDetector faceDetector = new FaceDetector(bitmap.getWidth(), bitmap.getHeight(),
+				MAX_FACES);
+		faces = new FaceDetector.Face[MAX_FACES];
+		faceDetector.findFaces(bitmap, faces);
+		for (FaceDetector.Face face : faces) {
+			if (face != null) {
+				face.getMidPoint(midPoint);
+				Log.d(TAG, "x: " + midPoint.x + ", y: " + midPoint.y);
+			}
+		}
 	}
 
 	private Camera openFrontFacingCameraGingerbread() {
