@@ -37,8 +37,8 @@ public class FeedFragment extends Fragment implements EyePositionListener {
 	private FeedListAdapter listAdapter;
 	private List<FeedItem> feedItems;
 
-	private final static String URL_FEED = "http://10.100.1.198:5000/feed";
-	private final static String BASE_URL = "http://10.100.1.198:5000/";
+	private final static String URL_FEED = "http://gigav.net:5000/feed";
+	private final static String BASE_URL = "http://gigav.net:5000/";
 
 	private FaceDetectionOpenCV facedetector;
 
