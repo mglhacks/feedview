@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ public class FeedFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		feedItems = new ArrayList<FeedItem>();
-		listAdapter = new FeedListAdapter(getActivity(), feedItems);
+		listAdapter = new FeedListAdapter(getActivity(), feedItems, facedetector);
 		// We first check for cached request
 		Cache cache = AppController.getInstance().getRequestQueue().getCache();
 		Entry entry = cache.get(URL_FEED);
@@ -83,9 +84,6 @@ public class FeedFragment extends Fragment {
 			// Adding request to volley request queue
 			AppController.getInstance().addToRequestQueue(jsonReq);
 		}
-
-
-		this.facedetector = new FaceDetectionOpenCV(getActivity());
 	}
 
 	/**
@@ -105,7 +103,8 @@ public class FeedFragment extends Fragment {
 				// Image might be null sometimes
 				String image = feedObj.isNull("image") ? null : feedObj
 						.getString("image");
-				item.setImge(image);
+//				item.setImage(image);
+				item.setImage("http://gigav.net/image/sample/danbo/5.JPG");
 				item.setStatus(feedObj.getString("status"));
 				item.setProfilePic(feedObj.getString("profilePic"));
 				item.setTimeStamp(feedObj.getString("timeStamp"));
@@ -127,11 +126,18 @@ public class FeedFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		listView = (ListView) getActivity().findViewById(R.id.list);
+		View view = inflater.inflate(R.layout.feed_main, container, false);
+		listView = (ListView) view.findViewById(R.id.feed_list);
 		listView.setAdapter(listAdapter);
-
-		return inflater.inflate(R.layout.feed_main, container, false);
+		
+		return view;
 	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		this.facedetector = new FaceDetectionOpenCV(getActivity(), this);
+	};
 
 	@Override
 	public void onResume() {
@@ -144,6 +150,15 @@ public class FeedFragment extends Fragment {
 	{
 		super.onPause();
 		facedetector.pause();
+	}
+	
+	public void updateCellNumber(int cellNumber) {
+		for (FeedItem item : feedItems) {
+			String old = item.getImage();
+			item.setImage(old.substring(0, old.length() - 5) + cellNumber + ".JPG");
+		}
+		Log.d(TAG, "cellNum: " + cellNumber);
+		listAdapter.notifyDataSetChanged();
 	}
 
 }

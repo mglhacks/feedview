@@ -11,6 +11,7 @@ import android.view.Menu;
 
 import com.borte.listviewfeed.FeedFragment;
 import com.borte.listviewfeed.R;
+import com.borte.rendering.OpenGLES10Fragment;
 import com.borte.uploading.UploadCameraFragment;
 
 public class MainActivity extends FragmentActivity {
@@ -18,7 +19,7 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.feed_main);
+		setContentView(R.layout.main_activity);
 		setupTabs();
 	}
 
@@ -39,15 +40,25 @@ public class MainActivity extends FragmentActivity {
 				.setText("Home")
 				.setIcon(R.drawable.ic_action_view_as_list)
 				.setTabListener(
-						new FragmentTabListener<FeedFragment>(0, this, "feed", FeedFragment.class));
+						new FragmentTabListener<FeedFragment>(R.id.flContainer, this, "feed", FeedFragment.class));
 		actionBar.addTab(feedTab);
 
+		Tab renderTab = actionBar
+				.newTab()
+				.setText("3D")
+				.setIcon(R.drawable.ic_action_slideshow)
+				.setTabListener(
+						new FragmentTabListener<OpenGLES10Fragment>(R.id.flContainer, this, "render",
+								OpenGLES10Fragment.class));
+		actionBar.addTab(renderTab);
+
+		
 		Tab uploadTab = actionBar
 				.newTab()
 				.setText("Upload")
 				.setIcon(R.drawable.ic_action_camera)
 				.setTabListener(
-						new FragmentTabListener<UploadCameraFragment>(this, "upload",
+						new FragmentTabListener<UploadCameraFragment>(R.id.flContainer, this, "upload",
 								UploadCameraFragment.class));
 		actionBar.addTab(uploadTab);
 
