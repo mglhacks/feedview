@@ -23,11 +23,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
-import com.borte.listviewfeed.R;
 import com.borte.listviewfeed.imageprocessing.EyePositionListener;
-import com.borte.listviewfeed.imageprocessing.FaceDetectionOpenCV;
 import com.borte.rendering.objloader.ObjRendererView;
 
 public class OpenGLFragment extends Fragment implements EyePositionListener {
@@ -36,30 +33,21 @@ public class OpenGLFragment extends Fragment implements EyePositionListener {
 
 	private ObjRendererView glSurfaceView;
 
-	private FaceDetectionOpenCV facedetector;
+//	private FaceDetectionOpenCV facedetector;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		glSurfaceView = new ObjRendererView(getActivity());
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView: start");
-		
-		View view = inflater.inflate(R.layout.render_main, container, false);
-		if (glSurfaceView == null) {
-			glSurfaceView = (ObjRendererView) view.findViewById(R.id.render_view);
-		} else {
-			if (((ViewGroup) glSurfaceView.getParent()) != null) {
-				((ViewGroup) glSurfaceView.getParent()).removeView(glSurfaceView);
-			}
-			((ViewGroup) view).addView(glSurfaceView);
+		if (((ViewGroup) glSurfaceView.getParent()) != null) {
+			((ViewGroup) glSurfaceView.getParent()).removeView(glSurfaceView);
 		}
-		facedetector = new FaceDetectionOpenCV(getActivity(), view, this);
-		
-		Log.d(TAG, "onCreateView: finish");
-		return view;
+		return glSurfaceView;
 	}
 
 	@Override
@@ -75,7 +63,7 @@ public class OpenGLFragment extends Fragment implements EyePositionListener {
 		// consume significant memory here.
 		super.onPause();
 		Log.d(TAG, "onPause");
-		facedetector.pause();
+//		facedetector.pause();
 		glSurfaceView.onPause();
 	}
 
@@ -86,7 +74,7 @@ public class OpenGLFragment extends Fragment implements EyePositionListener {
 		// this is a good place to re-allocate them.
 		super.onResume();
 		glSurfaceView.onResume();
-		facedetector.resume();
+//		facedetector.resume();
 	}
 
 	@Override

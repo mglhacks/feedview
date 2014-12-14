@@ -6,15 +6,15 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <org.opencv.android.JavaCameraView
+<!--    <org.opencv.android.JavaCameraView
         android:id="@+id/fd_surface_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        opencv:camera_id="front" />
+        opencv:camera_id="front" /> -->
 
     <com.borte.rendering.objloader.ObjRendererView
         android:id="@+id/render_view"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="fill_parent" />
     
 </RelativeLayout>

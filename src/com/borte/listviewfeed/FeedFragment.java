@@ -10,9 +10,6 @@ import org.json.JSONObject;
 import org.opencv.core.Point;
 
 import android.annotation.SuppressLint;
-import android.hardware.Camera;
-import android.hardware.Camera.Face;
-import android.hardware.Camera.FaceDetectionListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -40,10 +37,8 @@ public class FeedFragment extends Fragment implements EyePositionListener {
 	private FeedListAdapter listAdapter;
 	private List<FeedItem> feedItems;
 
-	//	private final static String URL_FEED = "http://10.100.1.198:5000/feed";
-	//	private final static String BASE_URL = "http://10.100.1.198:5000/";
-	private final static String URL_FEED = "http://api.androidhive.info/feed/feed.json";
-	private final static String BASE_URL = "";
+	private final static String URL_FEED = "http://10.100.1.198:5000/feed";
+	private final static String BASE_URL = "http://10.100.1.198:5000/";
 
 	private FaceDetectionOpenCV facedetector;
 
@@ -112,8 +107,8 @@ public class FeedFragment extends Fragment implements EyePositionListener {
 				// Image might be null sometimes
 				String image = feedObj.isNull("image") ? null : feedObj
 						.getString("image");
-				//				item.setImage(BASE_URL + image);
-				item.setImage("http://10.100.1.198:5000/static/36cd220726bdeff076f09c04a4c00f1b/5.jpg");
+				item.setImage(BASE_URL + image);
+//				item.setImage("http://10.100.1.198:5000/static/36cd220726bdeff076f09c04a4c00f1b/5.jpg");
 				item.setStatus(feedObj.getString("status"));
 				item.setProfilePic(BASE_URL + feedObj.getString("profilePic"));
 				item.setTimeStamp(feedObj.getString("timeStamp"));
