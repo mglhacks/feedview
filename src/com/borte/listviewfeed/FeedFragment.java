@@ -7,8 +7,12 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.opencv.core.Point;
 
 import android.annotation.SuppressLint;
+import android.hardware.Camera;
+import android.hardware.Camera.Face;
+import android.hardware.Camera.FaceDetectionListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -27,14 +31,19 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.borte.listviewfeed.adapter.FeedListAdapter;
 import com.borte.listviewfeed.app.AppController;
 import com.borte.listviewfeed.data.FeedItem;
+import com.borte.listviewfeed.imageprocessing.EyePositionListener;
 import com.borte.listviewfeed.imageprocessing.FaceDetectionOpenCV;
 
-public class FeedFragment extends Fragment {
+public class FeedFragment extends Fragment implements EyePositionListener {
 	private static final String TAG = FeedFragment.class.getSimpleName();
 	private ListView listView;
 	private FeedListAdapter listAdapter;
 	private List<FeedItem> feedItems;
-	private String URL_FEED = "http://api.androidhive.info/feed/feed.json";
+
+	//	private final static String URL_FEED = "http://10.100.1.198:5000/feed";
+	//	private final static String BASE_URL = "http://10.100.1.198:5000/";
+	private final static String URL_FEED = "http://api.androidhive.info/feed/feed.json";
+	private final static String BASE_URL = "";
 
 	private FaceDetectionOpenCV facedetector;
 
@@ -44,7 +53,7 @@ public class FeedFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		feedItems = new ArrayList<FeedItem>();
-		listAdapter = new FeedListAdapter(getActivity(), feedItems, facedetector);
+		listAdapter = new FeedListAdapter(getActivity(), feedItems);
 		// We first check for cached request
 		Cache cache = AppController.getInstance().getRequestQueue().getCache();
 		Entry entry = cache.get(URL_FEED);
@@ -103,10 +112,10 @@ public class FeedFragment extends Fragment {
 				// Image might be null sometimes
 				String image = feedObj.isNull("image") ? null : feedObj
 						.getString("image");
-//				item.setImage(image);
-				item.setImage("http://gigav.net/image/sample/danbo/5.JPG");
+				//				item.setImage(BASE_URL + image);
+				item.setImage("http://10.100.1.198:5000/static/36cd220726bdeff076f09c04a4c00f1b/5.jpg");
 				item.setStatus(feedObj.getString("status"));
-				item.setProfilePic(feedObj.getString("profilePic"));
+				item.setProfilePic(BASE_URL + feedObj.getString("profilePic"));
 				item.setTimeStamp(feedObj.getString("timeStamp"));
 
 				// url might be null sometimes
@@ -127,16 +136,22 @@ public class FeedFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.feed_main, container, false);
-		listView = (ListView) view.findViewById(R.id.feed_list);
-		listView.setAdapter(listAdapter);
-		
+		if (listView == null) {
+			listView = (ListView) view.findViewById(R.id.feed_list);
+			listView.setAdapter(listAdapter);
+		} else {
+			if (((ViewGroup) listView.getParent()) != null) {
+				((ViewGroup) listView.getParent()).removeView(listView);
+			}
+			((ViewGroup) view).addView(listView);
+		}
+		facedetector = new FaceDetectionOpenCV(getActivity(), view, this);
 		return view;
 	}
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		this.facedetector = new FaceDetectionOpenCV(getActivity(), this);
 	};
 
 	@Override
@@ -151,13 +166,37 @@ public class FeedFragment extends Fragment {
 		super.onPause();
 		facedetector.pause();
 	}
-	
-	public void updateCellNumber(int cellNumber) {
+
+	private int getCellNumber(Point point) {
+		Log.d(TAG, point.toString());
+		int row, column;
+		if (point.x < 0.35) {
+			row = 2;
+		} else if (point.x < 0.55) {
+			row = 1;
+		} else {
+			row = 0;
+		}
+
+		if (point.y < 0.35) {
+			column = 2;
+		} else if (point.y < 0.60) {
+			column = 1;
+		} else {
+			column = 0;
+		}
+
+		return 3 * row + column + 1;
+	}
+
+	@Override
+	public void updatePosition(Point point, double eyeDistance) {
+		int cellNumber = getCellNumber(point);
+		Log.d(TAG, "cellNum: " + cellNumber);
 		for (FeedItem item : feedItems) {
 			String old = item.getImage();
-			item.setImage(old.substring(0, old.length() - 5) + cellNumber + ".JPG");
+			item.setImage(old.substring(0, old.length() - 5) + cellNumber + ".jpg");
 		}
-		Log.d(TAG, "cellNum: " + cellNumber);
 		listAdapter.notifyDataSetChanged();
 	}
 

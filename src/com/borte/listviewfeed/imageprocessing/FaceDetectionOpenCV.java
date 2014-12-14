@@ -20,8 +20,8 @@ import org.opencv.objdetect.CascadeClassifier;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 
-import com.borte.listviewfeed.FeedFragment;
 import com.borte.listviewfeed.R;
 
 public class FaceDetectionOpenCV implements CvCameraViewListener2 {
@@ -29,7 +29,7 @@ public class FaceDetectionOpenCV implements CvCameraViewListener2 {
 	private static final String TAG = FaceDetectionOpenCV.class.getSimpleName();
 
 	private final Activity activity;
-	private final FeedFragment feedFragment;
+	private final EyePositionListener positionListener;
 
 	private CameraBridgeViewBase openCvCameraView;
 	private CascadeClassifier cascadeClassifier;
@@ -43,9 +43,9 @@ public class FaceDetectionOpenCV implements CvCameraViewListener2 {
 	private int width;
 	private int height;
 
-	public FaceDetectionOpenCV(Activity activity, FeedFragment feedFragment) {
+	public FaceDetectionOpenCV(Activity activity, View view, EyePositionListener positionListener) {
 		this.activity = activity;
-		this.feedFragment = feedFragment;
+		this.positionListener = positionListener;
 
 		mLoaderCallback = new BaseLoaderCallback(activity) {
 
@@ -62,7 +62,7 @@ public class FaceDetectionOpenCV implements CvCameraViewListener2 {
 			}
 		};
 
-		openCvCameraView = (CameraBridgeViewBase) activity
+		openCvCameraView = (CameraBridgeViewBase) view
 				.findViewById(R.id.fd_surface_view);
 		openCvCameraView.setCvCameraViewListener(this);
 	}
@@ -120,10 +120,6 @@ public class FaceDetectionOpenCV implements CvCameraViewListener2 {
 		}
 	}
 
-	private Point getMidpoint(Point tl, Point br) {
-		return new Point((tl.x + br.x) / 2.0, (tl.y + br.y) / 2.0);
-	}
-
 	@Override
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		Log.d(TAG, "onCameraFrame");
@@ -138,43 +134,36 @@ public class FaceDetectionOpenCV implements CvCameraViewListener2 {
 
 		Rect[] eyesArray = eyes.toArray();
 		if (eyesArray.length == 2) {
-			Point leftEyeCenter = getMidpoint(eyesArray[0].tl(), eyesArray[0].br());
-			Point rightEyeCenter = getMidpoint(eyesArray[1].tl(), eyesArray[1].br());
-			updateCellnumber(getMidpoint(leftEyeCenter, rightEyeCenter));
-		} else if (eyesArray.length == 2) {
+			Point leftEyeCenter = normalize(getMidpoint(eyesArray[0].tl(), eyesArray[0].br()));
+			Point rightEyeCenter = normalize(getMidpoint(eyesArray[1].tl(), eyesArray[1].br()));
+			updatePositionUIThread(getMidpoint(leftEyeCenter, rightEyeCenter), distance(leftEyeCenter, rightEyeCenter));
+		} else if (eyesArray.length == 1) {
 			// Only one eye found
-			updateCellnumber(getMidpoint(eyesArray[0].tl(), eyesArray[0].br()));
+			updatePositionUIThread(normalize(getMidpoint(eyesArray[0].tl(), eyesArray[0].br())), 0);
 		}
 
 		return null;
 	}
+	
+	private Point normalize(Point point) {
+		return new Point(point.x / width, point.y / height);
+	}
+	
+	private static double distance(Point a, Point b) {
+		return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+	}
+	
+	private static Point getMidpoint(Point a, Point b) {
+		return new Point((a.x + b.x) / 2.0, (a.y + b.y) / 2.0);
+	}
 
-	private void updateCellnumber(Point eyeCenter) {
-		int row, column;
-		if (eyeCenter.x < 2 * width / 5) {
-			row = 2;
-		} else if (eyeCenter.x < 3 * width / 5) {
-			row = 1;
-		} else {
-			row = 0;
-		}
-
-		if (eyeCenter.y < 2 * height / 5) {
-			column = 2;
-		} else if (eyeCenter.y < 3 * height / 5) {
-			column = 1;
-		} else {
-			column = 0;
-		}
-
-		final int cellNumber = 3 * row + column + 1;
-		Log.d(TAG, eyeCenter.x / width + " " + eyeCenter.y / height);
-
+	private void updatePositionUIThread(final Point point, final double eyeDistance) {
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				feedFragment.updateCellNumber(cellNumber);
+				positionListener.updatePosition(point, eyeDistance);
 			}
 		});
 	}
+
 }

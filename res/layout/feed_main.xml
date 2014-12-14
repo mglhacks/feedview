@@ -15,7 +15,7 @@
     <ListView
         android:id="@+id/feed_list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400px"
         android:divider="@null" />
     
 </RelativeLayout>

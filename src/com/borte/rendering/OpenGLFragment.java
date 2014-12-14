@@ -15,38 +15,57 @@
  */
 package com.borte.rendering;
 
+import org.opencv.core.Point;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.borte.listviewfeed.R;
+import com.borte.listviewfeed.imageprocessing.EyePositionListener;
+import com.borte.listviewfeed.imageprocessing.FaceDetectionOpenCV;
 import com.borte.rendering.objloader.ObjRendererView;
 
-public class OpenGLFragment extends Fragment {
+public class OpenGLFragment extends Fragment implements EyePositionListener {
 
 	private static final String TAG = OpenGLFragment.class.getSimpleName();
-	
+
 	private ObjRendererView glSurfaceView;
+
+	private FaceDetectionOpenCV facedetector;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "onCreate: start");
-		glSurfaceView = new ObjRendererView(getActivity());
-		Log.d(TAG, "onCreate: finish");
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView: start");
-		if (glSurfaceView.getParent() != null) {
-			((ViewGroup) glSurfaceView.getParent()).removeView(glSurfaceView);
+		
+		View view = inflater.inflate(R.layout.render_main, container, false);
+		if (glSurfaceView == null) {
+			glSurfaceView = (ObjRendererView) view.findViewById(R.id.render_view);
+		} else {
+			if (((ViewGroup) glSurfaceView.getParent()) != null) {
+				((ViewGroup) glSurfaceView.getParent()).removeView(glSurfaceView);
+			}
+			((ViewGroup) view).addView(glSurfaceView);
 		}
+		facedetector = new FaceDetectionOpenCV(getActivity(), view, this);
+		
 		Log.d(TAG, "onCreateView: finish");
-		return glSurfaceView;
+		return view;
 	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+	};
 
 	@Override
 	public void onPause() {
@@ -56,6 +75,7 @@ public class OpenGLFragment extends Fragment {
 		// consume significant memory here.
 		super.onPause();
 		Log.d(TAG, "onPause");
+		facedetector.pause();
 		glSurfaceView.onPause();
 	}
 
@@ -66,6 +86,13 @@ public class OpenGLFragment extends Fragment {
 		// this is a good place to re-allocate them.
 		super.onResume();
 		glSurfaceView.onResume();
+		facedetector.resume();
+	}
+
+	@Override
+	public void updatePosition(Point point, double eyeDistance) {
+		// TODO Auto-generated method stub
+		Log.d(TAG, point.toString() + " " + eyeDistance);
 	}
 
 }

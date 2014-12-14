@@ -4,7 +4,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.media.FaceDetector;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -17,26 +16,21 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.borte.listviewfeed.FeedFragment;
 import com.borte.listviewfeed.FeedImageView;
 import com.borte.listviewfeed.R;
 import com.borte.listviewfeed.app.AppController;
 import com.borte.listviewfeed.data.FeedItem;
-import com.borte.listviewfeed.imageprocessing.FaceDetectionOpenCV;
 
 public class FeedListAdapter extends BaseAdapter {	
 	private final Activity activity;
 	private LayoutInflater inflater;
 	private List<FeedItem> feedItems;
 
-	private final FaceDetectionOpenCV faceDetector;
-	
 	ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
-	public FeedListAdapter(Activity activity, List<FeedItem> feedItems, FaceDetectionOpenCV faceDetector) {
+	public FeedListAdapter(Activity activity, List<FeedItem> feedItems) {
 		this.activity = activity;
 		this.feedItems = feedItems;
-		this.faceDetector = faceDetector;
 	}
 
 	@Override

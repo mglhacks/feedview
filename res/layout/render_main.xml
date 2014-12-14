@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:opencv="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <org.opencv.android.JavaCameraView
+        android:id="@+id/fd_surface_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        opencv:camera_id="front" />
+
+    <com.borte.rendering.objloader.ObjRendererView
+        android:id="@+id/render_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+    
+</RelativeLayout>
