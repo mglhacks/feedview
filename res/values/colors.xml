@@ -5,5 +5,15 @@
     <color name="feed_item_bg">#ffffff</color>
     <color name="feed_item_border">#c2c3c8</color>
     <color name="link">#0a80d1</color>
-    <color name="timestamp">#a0a3a7</color>    
+    <color name="timestamp">#a0a3a7</color> 
+    
+    <color name="tab_unselected">#1E88E5</color>    
+    <color name="tab_selected">#0D47A1</color>    
+    <color name="tab_unselected_focused">#1E88E5</color>    
+    <color name="tab_selected_focused">#1E88E5</color>    
+    <color name="tab_unselected_pressed">#1E88E5</color>    
+    <color name="tab_selected_pressed">#0D47A1</color>    
+    <color name="actionbar_text">#ffffff</color>    
+    <color name="actionbar_background">#1E88E5</color>    
+    
 </resources>

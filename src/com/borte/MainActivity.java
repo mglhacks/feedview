@@ -3,8 +3,6 @@ package com.borte;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -27,13 +25,8 @@ public class MainActivity extends FragmentActivity {
 	private void setupTabs() {
 		ActionBar actionBar = getActionBar();
 
-		// To get the look of facebook (changing background color & hiding the
-		// icon)
-		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3b5998")));
-		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		Tab feedTab = actionBar
 				.newTab()
