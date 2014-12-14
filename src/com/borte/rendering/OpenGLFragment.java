@@ -17,6 +17,7 @@ package com.borte.rendering;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,16 +26,25 @@ import com.borte.rendering.objloader.ObjRendererView;
 
 public class OpenGLFragment extends Fragment {
 
+	private static final String TAG = OpenGLFragment.class.getSimpleName();
+	
 	private ObjRendererView glSurfaceView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG, "onCreate: start");
+		glSurfaceView = new ObjRendererView(getActivity());
+		Log.d(TAG, "onCreate: finish");
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		glSurfaceView = new ObjRendererView(getActivity());
+		Log.d(TAG, "onCreateView: start");
+		if (glSurfaceView.getParent() != null) {
+			((ViewGroup) glSurfaceView.getParent()).removeView(glSurfaceView);
+		}
+		Log.d(TAG, "onCreateView: finish");
 		return glSurfaceView;
 	}
 
@@ -45,6 +55,7 @@ public class OpenGLFragment extends Fragment {
 		// you should consider de-allocating objects that
 		// consume significant memory here.
 		super.onPause();
+		Log.d(TAG, "onPause");
 		glSurfaceView.onPause();
 	}
 
