@@ -15,6 +15,8 @@
  */
 package com.borte.rendering;
 
+import com.borte.rendering.objloader.ObjRendererView;
+
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,23 +24,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class OpenGLES10Fragment extends Fragment {
+public class OpenGLFragment extends Fragment {
 
-	private GLSurfaceView mGLView;
+//	private GLSurfaceView glSurfaceView;
+	private ObjRendererView glSurfaceView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 	}
-
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// Create a GLSurfaceView instance and set it
-		// as the ContentView for this Activity.
-		mGLView = new MyGLSurfaceView(getActivity());
-		return mGLView;
+//		glSurfaceView = new MyGLSurfaceView(getActivity());
+		glSurfaceView = new ObjRendererView(getActivity());
+		return glSurfaceView;
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class OpenGLES10Fragment extends Fragment {
 		// you should consider de-allocating objects that
 		// consume significant memory here.
 		super.onPause();
-		mGLView.onPause();
+		glSurfaceView.onPause();
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class OpenGLES10Fragment extends Fragment {
 		// If you de-allocated graphic objects for onPause()
 		// this is a good place to re-allocate them.
 		super.onResume();
-		mGLView.onResume();
+		glSurfaceView.onResume();
 	}
 
 }

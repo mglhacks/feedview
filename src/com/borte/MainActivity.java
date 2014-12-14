@@ -11,7 +11,7 @@ import android.view.Menu;
 
 import com.borte.listviewfeed.FeedFragment;
 import com.borte.listviewfeed.R;
-import com.borte.rendering.OpenGLES10Fragment;
+import com.borte.rendering.OpenGLFragment;
 import com.borte.uploading.UploadCameraFragment;
 
 public class MainActivity extends FragmentActivity {
@@ -48,8 +48,8 @@ public class MainActivity extends FragmentActivity {
 				.setText("3D")
 				.setIcon(R.drawable.ic_action_slideshow)
 				.setTabListener(
-						new FragmentTabListener<OpenGLES10Fragment>(R.id.flContainer, this, "render",
-								OpenGLES10Fragment.class));
+						new FragmentTabListener<OpenGLFragment>(R.id.flContainer, this, "render",
+								OpenGLFragment.class));
 		actionBar.addTab(renderTab);
 
 		
