@@ -15,18 +15,16 @@
  */
 package com.borte.rendering;
 
-import com.borte.rendering.objloader.ObjRendererView;
-
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.borte.rendering.objloader.ObjRendererView;
+
 public class OpenGLFragment extends Fragment {
 
-//	private GLSurfaceView glSurfaceView;
 	private ObjRendererView glSurfaceView;
 
 	@Override
@@ -36,7 +34,6 @@ public class OpenGLFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//		glSurfaceView = new MyGLSurfaceView(getActivity());
 		glSurfaceView = new ObjRendererView(getActivity());
 		return glSurfaceView;
 	}
